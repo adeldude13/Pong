@@ -3,9 +3,10 @@
 #include <iostream>
 
 #define FPS_LIMIT 60
-#define MOVE_SPEED 100
+#define MOVE_SPEED 1000
 #define TOP_LIMIT 0
-#define BALL_SPEED 30
+#define BALL_SPEED 1500
+#define RADIUS 10
 
 const float p_WIDTH = 20.0f;
 const float p_HEIGHT = 200.0f;
@@ -27,7 +28,7 @@ Pong::Pong(int W, int H) {
 	pad2.setPosition(W-p_WIDTH-10, (H/2)-(p_HEIGHT/2));
 	pad2.setFillColor(sf::Color(255, 255, 255));
 
-	ball.setRadius(10);
+	ball.setRadius(RADIUS);
 	ball.setPosition(W/2, H/2);
 }
 
@@ -65,41 +66,36 @@ void Pong::render() {
 }
 
 void Pong::update() {
-	sf::Time dt = clock.getElapsedTime();
-	sf::Time bt = bclock.getElapsedTime();
-	if(bt > sf::seconds(0.03)) {
-		if(ball.getPosition().x + BALL_SPEED + p_WIDTH >=	pad2.getPosition().x || ball.getPosition().x - BALL_SPEED <= 0) {
-			if(dir == LEFT) {
-				dir = RIGHT;
-			} else {
-				dir = LEFT;
-			}
-		}
-		ball.move(dir == LEFT ? -BALL_SPEED : BALL_SPEED, 0);
-
-		bclock.restart();
-	}
-	if(dt < sf::seconds(0.1)) return;
+	float dt = clock.getElapsedTime().asSeconds();
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		if(pad1.getPosition().y > TOP_LIMIT) {
-			pad1.move(0, -MOVE_SPEED);
+			pad1.move(0, -MOVE_SPEED * dt);
 		}
-	} 
- if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+	} else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 		if(pad1.getPosition().y < height-p_HEIGHT) {
-			pad1.move(0, MOVE_SPEED);
+			pad1.move(0, MOVE_SPEED * dt);
 		}
 	} 
- if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+ 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		if(pad2.getPosition().y > TOP_LIMIT) {
-			pad2.move(0, -MOVE_SPEED);
+			pad2.move(0, -MOVE_SPEED * dt);
 		}
-	} 
- if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+	} else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 		if(pad2.getPosition().y < height-p_HEIGHT) {
-			pad2.move(0, MOVE_SPEED);
+			pad2.move(0, MOVE_SPEED * dt);
 		}
 	}
+ 	int bpos = ball.getPosition().x;
+	if(bpos + RADIUS / 4 + 20 >= pad2.getPosition().x) {
+		dir = RIGHT;	
+	} else if(bpos - RADIUS / 4 - 30 <= 0) {
+		dir = LEFT;
+	}
 
+ 	if(dir == LEFT) {
+		ball.move(BALL_SPEED * dt, 0);
+	} else {
+		ball.move(-BALL_SPEED * dt, 0);
+	}
 	clock.restart();
 }
