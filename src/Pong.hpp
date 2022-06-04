@@ -1,6 +1,8 @@
 #ifndef PONG
 #define PONG
 
+#include <string>
+#include <inttypes.h>
 #include <SFML/Graphics.hpp>
 
 typedef enum {
@@ -11,7 +13,7 @@ typedef enum {
 
 class Pong {
 	public:	
-		Pong(int, int);
+		Pong(int, int, std::string);
 		void loop();
 		void exit();
 		void input();
@@ -24,7 +26,10 @@ class Pong {
 		sf::Clock clock, bclock;
 		sf::RectangleShape pad1, pad2;
 		sf::CircleShape ball;
+		int s1, s2;
 		Dir dir = RIGHT;
+		sf::Font font;
+		sf::Text t1, t2;
 };
 
 

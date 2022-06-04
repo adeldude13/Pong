@@ -1,6 +1,7 @@
 #include "Pong.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string>
 
 #define FPS_LIMIT 60
 #define MOVE_SPEED 1000
@@ -11,9 +12,18 @@
 const float p_WIDTH = 20.0f;
 const float p_HEIGHT = 200.0f;
 
-Pong::Pong(int W, int H) {
+Pong::Pong(int W, int H, std::string font_path) {
+	if(!font.loadFromFile(font_path)) {
+		std::cout << "no valid font dir or no read premission is given" << std::endl;
+		return;
+	}
+	
+	s1 = 0;
+	s2 = 0;
+	
 	width = W;
 	height = H;
+	
 	window.create(sf::VideoMode(W, H), "Pong", sf::Style::Close);
 	auto desktop = sf::VideoMode::getDesktopMode();
 	window.setPosition(sf::Vector2i(desktop.width/2 - window.getSize().x/2, desktop.height/2 - window.getSize().y/2));
@@ -30,6 +40,19 @@ Pong::Pong(int W, int H) {
 
 	ball.setRadius(RADIUS);
 	ball.setPosition(W/2, H/2);
+
+	t2.setFont(font);
+	t2.setString("0");
+	t2.setCharacterSize(50);	
+	t2.setPosition(50, 20);	
+	t2.setFillColor(sf::Color::White);
+
+	t1.setFont(font);
+	t1.setString("0");
+	t1.setCharacterSize(50);	
+	t1.setPosition(W-50-50, 20);	
+	t1.setFillColor(sf::Color::White);
+
 }
 
 void Pong::input() {
@@ -62,6 +85,8 @@ void Pong::render() {
 	window.draw(pad1);	
 	window.draw(pad2);
 	window.draw(ball);	
+	window.draw(t1);
+	window.draw(t2);	
 	window.display();
 }
 
@@ -93,6 +118,24 @@ void Pong::update() {
 	} else if(p2) {
 		dir = RIGHT;
 		std::cout << "done" << std::endl;
+	} else if(ball.getPosition().x < 0 || ball.getPosition().x > width) {
+		if(dir == RIGHT) {
+			s2 += 1;
+			t1.setString(std::to_string(s2));
+			std::cout << std::to_string(s2) << std::endl;
+			if(s2 == 10) {
+				std::cout << "Player Two Won" << std::endl;
+				this->exit();
+			}
+		} else if(dir == LEFT) {
+			s1 += 1;
+			t1.setString(std::to_string(s1));
+			if(s1 == 10) {
+				std::cout << "Player One Won" << std::endl;
+				this->exit();
+			}
+		}
+		ball.setPosition(width / 2, height / 2);
 	}
  	if(dir == LEFT) {
 		ball.move(BALL_SPEED * dt, 0);

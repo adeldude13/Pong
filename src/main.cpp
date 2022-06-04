@@ -4,8 +4,7 @@
 #define HEIGHT 900
 
 int main() {
-	Pong p(WIDTH, HEIGHT);
+	Pong p(WIDTH, HEIGHT, "../Fonts/font.ttf");
 	p.loop();
-	p.exit();
 	return 0;
 }
