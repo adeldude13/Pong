@@ -67,6 +67,8 @@ void Pong::render() {
 
 void Pong::update() {
 	float dt = clock.getElapsedTime().asSeconds();
+	int p1 = pad1.getGlobalBounds().intersects(ball.getGlobalBounds());
+	int p2 = pad2.getGlobalBounds().intersects(ball.getGlobalBounds());
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		if(pad1.getPosition().y > TOP_LIMIT) {
 			pad1.move(0, -MOVE_SPEED * dt);
@@ -85,13 +87,13 @@ void Pong::update() {
 			pad2.move(0, MOVE_SPEED * dt);
 		}
 	}
- 	int bpos = ball.getPosition().x;
-	if(bpos + RADIUS / 4 + 20 >= pad2.getPosition().x) {
-		dir = RIGHT;	
-	} else if(bpos - RADIUS / 4 - 30 <= 0) {
+	if(p1) {
 		dir = LEFT;
+		std::cout << "done" << std::endl;
+	} else if(p2) {
+		dir = RIGHT;
+		std::cout << "done" << std::endl;
 	}
-
  	if(dir == LEFT) {
 		ball.move(BALL_SPEED * dt, 0);
 	} else {
