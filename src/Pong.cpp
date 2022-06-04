@@ -3,7 +3,9 @@
 #include <iostream>
 
 #define FPS_LIMIT 60
-#define MOVE_SPEED 30
+#define MOVE_SPEED 100
+#define TOP_LIMIT 0
+#define BALL_SPEED 30
 
 const float p_WIDTH = 20.0f;
 const float p_HEIGHT = 200.0f;
@@ -55,41 +57,49 @@ void Pong::exit() {
 
 
 void Pong::render() {
+	window.clear(sf::Color(0, 0, 0));
+	window.draw(pad1);	
+	window.draw(pad2);
+	window.draw(ball);	
 	window.display();
 }
 
 void Pong::update() {
 	sf::Time dt = clock.getElapsedTime();
-	if(dt < sf::seconds(0.1)) return;
-	window.clear(sf::Color(0, 0, 0));
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		if(pad1.getPosition().y <= 0) {
-			goto B;
+	sf::Time bt = bclock.getElapsedTime();
+	if(bt > sf::seconds(0.03)) {
+		if(ball.getPosition().x + BALL_SPEED + p_WIDTH >=	pad2.getPosition().x || ball.getPosition().x - BALL_SPEED <= 0) {
+			if(dir == LEFT) {
+				dir = RIGHT;
+			} else {
+				dir = LEFT;
+			}
 		}
-		pad1.move(0, -MOVE_SPEED);
+		ball.move(dir == LEFT ? -BALL_SPEED : BALL_SPEED, 0);
+
+		bclock.restart();
+	}
+	if(dt < sf::seconds(0.1)) return;
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		if(pad1.getPosition().y > TOP_LIMIT) {
+			pad1.move(0, -MOVE_SPEED);
+		}
 	} 
  if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		if(pad1.getPosition().y >= height-p_HEIGHT) {
-			goto B;
+		if(pad1.getPosition().y < height-p_HEIGHT) {
+			pad1.move(0, MOVE_SPEED);
 		}
-		pad1.move(0, MOVE_SPEED);
 	} 
  if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		if(pad2.getPosition().y <= 0) {
-			goto B;
+		if(pad2.getPosition().y > TOP_LIMIT) {
+			pad2.move(0, -MOVE_SPEED);
 		}
-		pad2.move(0, -MOVE_SPEED);
 	} 
  if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		if(pad2.getPosition().y >= height-p_HEIGHT) {
-			goto B;
+		if(pad2.getPosition().y < height-p_HEIGHT) {
+			pad2.move(0, MOVE_SPEED);
 		}
-		pad2.move(0, MOVE_SPEED);
 	}
 
-B:	
-	window.draw(pad1);	
-	window.draw(pad2);
-	window.draw(ball);
 	clock.restart();
 }

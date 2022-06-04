@@ -3,6 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
+typedef enum {
+	RIGHT,
+	LEFT
+} Dir;
+
 
 class Pong {
 	public:	
@@ -14,13 +19,12 @@ class Pong {
 		void update();
 
 	private:	
-		int width;
-		int height;
+		int width, height;
 		sf::RenderWindow window;
-		sf::Clock clock;
-		sf::RectangleShape pad1;
-		sf::RectangleShape pad2;
+		sf::Clock clock, bclock;
+		sf::RectangleShape pad1, pad2;
 		sf::CircleShape ball;
+		Dir dir = RIGHT;
 };
 
 
