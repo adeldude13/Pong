@@ -24,7 +24,7 @@ Pong::Pong(int W, int H, std::string font_path) {
 	width = W;
 	height = H;
 	
-	window.create(sf::VideoMode(W, H), "Pong", sf::Style::Close);
+	window.create(sf::VideoMode(W, H), "Pong", sf::Style::Close | sf::Style::Fullscreen);
 	auto desktop = sf::VideoMode::getDesktopMode();
 	window.setPosition(sf::Vector2i(desktop.width/2 - window.getSize().x/2, desktop.height/2 - window.getSize().y/2));
 	window.setFramerateLimit(FPS_LIMIT);
@@ -52,7 +52,11 @@ Pong::Pong(int W, int H, std::string font_path) {
 	t1.setCharacterSize(50);	
 	t1.setPosition(W-50-50, 20);	
 	t1.setFillColor(sf::Color::White);
-
+	
+	p.setFont(font);
+	p.setCharacterSize(65);	
+	p.setPosition(W/4-50, (H/2)-50);	
+	p.setFillColor(sf::Color::White);
 }
 
 void Pong::input() {
@@ -114,33 +118,47 @@ void Pong::update() {
 	}
 	if(p1) {
 		dir = LEFT;
-		std::cout << "done" << std::endl;
 	} else if(p2) {
 		dir = RIGHT;
-		std::cout << "done" << std::endl;
 	} else if(ball.getPosition().x < 0 || ball.getPosition().x > width) {
 		if(dir == RIGHT) {
 			s2 += 1;
 			t1.setString(std::to_string(s2));
-			std::cout << std::to_string(s2) << std::endl;
 			if(s2 == 10) {
-				std::cout << "Player Two Won" << std::endl;
-				this->exit();
+				this->end("Player Two");
 			}
 		} else if(dir == LEFT) {
 			s1 += 1;
-			t1.setString(std::to_string(s1));
+			t2.setString(std::to_string(s1));
 			if(s1 == 10) {
-				std::cout << "Player One Won" << std::endl;
-				this->exit();
+				this->end("Player One");	
 			}
 		}
 		ball.setPosition(width / 2, height / 2);
 	}
+
+
  	if(dir == LEFT) {
-		ball.move(BALL_SPEED * dt, 0);
+		ball.move(BALL_SPEED * dt, yv * dt);
 	} else {
-		ball.move(-BALL_SPEED * dt, 0);
+		ball.move(-BALL_SPEED * dt, yv * dt);
 	}
+
+	int by = ball.getPosition().y;
+	if(by > height || by < 0) {
+		yv *= -1.1f;
+		ball.move(0, by < 0 ? 30 : -30);
+	} 
+
 	clock.restart();
+}
+
+void Pong::end(std::string s) {
+	p.setString(s + " Won");
+	window.clear(sf::Color(0, 0, 0));
+	window.draw(p);
+	window.display();
+	sf::Time t = sf::seconds(5);
+	sf::sleep(t);
+	this->exit();
 }

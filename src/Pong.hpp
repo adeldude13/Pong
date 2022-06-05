@@ -19,7 +19,7 @@ class Pong {
 		void input();
 		void render();
 		void update();
-
+		void end(std::string);
 	private:	
 		int width, height;
 		sf::RenderWindow window;
@@ -28,8 +28,9 @@ class Pong {
 		sf::CircleShape ball;
 		int s1, s2;
 		Dir dir = RIGHT;
+		float yv = 60.0f;
 		sf::Font font;
-		sf::Text t1, t2;
+		sf::Text t1, t2, p;
 };
 
 
