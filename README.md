@@ -30,6 +30,6 @@ quick note: this code is only tested on linux, im 99% sure it will work on other
 * `DOWN KEY` - Move down
 
 ## TODO
-[ ] add sound 
-[ ] add splashscreen
-[ ] add an option to use ai or to play multiplayer
+- [ ] add sound 
+- [ ] add splashscreen
+- [ ] add an option to use ai or to play multiplayer
